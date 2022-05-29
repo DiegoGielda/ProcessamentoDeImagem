@@ -6746,6 +6746,7 @@ object frmPrincipal: TfrmPrincipal
       Height = 25
       Caption = 'Divis'#227'o'
       TabOrder = 3
+      OnClick = btnDivisaoClick
     end
     object btnMedia: TButton
       Left = 14
@@ -6754,6 +6755,7 @@ object frmPrincipal: TfrmPrincipal
       Height = 25
       Caption = 'M'#233'dia'
       TabOrder = 4
+      OnClick = btnMediaClick
     end
     object btnBlending: TButton
       Left = 14
@@ -6762,6 +6764,7 @@ object frmPrincipal: TfrmPrincipal
       Height = 25
       Caption = 'Blending'
       TabOrder = 5
+      OnClick = btnBlendingClick
     end
     object edtMultiplicacao: TEdit
       Left = 116
@@ -6808,6 +6811,7 @@ object frmPrincipal: TfrmPrincipal
       Height = 25
       Caption = 'AND'
       TabOrder = 0
+      OnClick = btnANDClick
     end
     object btnOR: TButton
       Left = 16
@@ -6816,6 +6820,7 @@ object frmPrincipal: TfrmPrincipal
       Height = 25
       Caption = 'OR'
       TabOrder = 1
+      OnClick = btnORClick
     end
     object btnXOR: TButton
       Left = 16
@@ -6824,6 +6829,7 @@ object frmPrincipal: TfrmPrincipal
       Height = 25
       Caption = 'XOR'
       TabOrder = 2
+      OnClick = btnXORClick
     end
     object btnNOT: TButton
       Left = 16
@@ -6832,6 +6838,7 @@ object frmPrincipal: TfrmPrincipal
       Height = 25
       Caption = 'NOT'
       TabOrder = 3
+      OnClick = btnNOTClick
     end
   end
   object gbResultante: TGroupBox
