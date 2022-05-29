@@ -4,7 +4,7 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.ExtDlgs, dxGDIPlusClasses;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.ExtDlgs, dxGDIPlusClasses, Vcl.Buttons;
 
 type
   TfrmPrincipal = class(TForm)
@@ -12,34 +12,31 @@ type
     imagemA: TImage;
     gbImagemB: TGroupBox;
     imagemB: TImage;
-    btnCarregarImagemA: TButton;
-    btnCarregarImagemB: TButton;
     gbOperacoesAritmeticas: TGroupBox;
-    btnAdicao: TButton;
-    btnSubtracao: TButton;
-    btnMultiplicacao: TButton;
-    btnDivisao: TButton;
-    btnMedia: TButton;
-    btnBlending: TButton;
     edtMultiplicacao: TEdit;
     edtDivisao: TEdit;
     edtBlending: TEdit;
-    btnCinza: TButton;
     gbOperacoesLogicas: TGroupBox;
-    btnAND: TButton;
-    btnOR: TButton;
-    btnXOR: TButton;
-    btnNOT: TButton;
     gbResultante: TGroupBox;
     imagemResultante: TImage;
     abrirImagem: TOpenPictureDialog;
-    Button1: TButton;
-    Button2: TButton;
-    Button3: TButton;
+    btnTrocaImagem: TSpeedButton;
+    btnMedia: TSpeedButton;
+    btnBlending: TSpeedButton;
+    btnDivisao: TSpeedButton;
+    btnMultiplicacao: TSpeedButton;
+    btnSubtracao: TSpeedButton;
+    btnAdicao: TSpeedButton;
+    btnCinza: TSpeedButton;
+    btnCarregarImagemA: TSpeedButton;
+    btnCarregarImagemB: TSpeedButton;
+    btnAND: TSpeedButton;
+    btnOR: TSpeedButton;
+    btnXOR: TSpeedButton;
+    btnNOT: TSpeedButton;
     procedure btnCarregarImagemAClick(Sender: TObject);
     procedure btnCarregarImagemBClick(Sender: TObject);
     procedure btnCinzaClick(Sender: TObject);
-    procedure FormCreate(Sender: TObject);
     procedure btnAdicaoClick(Sender: TObject);
     procedure btnSubtracaoClick(Sender: TObject);
     procedure btnMultiplicacaoClick(Sender: TObject);
@@ -50,10 +47,11 @@ type
     procedure btnXORClick(Sender: TObject);
     procedure btnORClick(Sender: TObject);
     procedure btnANDClick(Sender: TObject);
+    procedure btnTrocaImagemClick(Sender: TObject);
   private
     { Private declarations }
-    FImagemA: TWICImage;
-    FImagemB: TWICImage;
+    procedure converterParaBinario(pImagem: TImage);
+
   public
     { Public declarations }
   end;
@@ -66,7 +64,7 @@ implementation
 {$R *.dfm}
 
 uses
-  System.Math, System.StrUtils, Vcl.Imaging.jpeg;
+  System.Math, System.StrUtils, Vcl.Imaging.jpeg, System.Types;
 
 procedure TfrmPrincipal.btnAdicaoClick(Sender: TObject);
 var
@@ -150,6 +148,9 @@ begin
     // Ajusta o tamanho das imagens
     lAuxImagemA.Canvas.StretchDraw(lAuxImagemA.Canvas.ClipRect, imagemA.Picture.Graphic);
     lAuxImagemB.Canvas.StretchDraw(lAuxImagemB.Canvas.ClipRect, imagemB.Picture.Graphic);
+
+    converterParaBinario(lAuxImagemA);
+    converterParaBinario(lAuxImagemB);
 
     for lY := 0 to lAuxImagemA.Height - 1 do
     begin
@@ -273,9 +274,6 @@ begin
   begin
     lCaminhoImagem := abrirImagem.FileName;
     imagemA.Picture.LoadFromFile(lCaminhoImagem);
-
-    /// IMAGEM A
-    FImagemA.LoadFromFile(lCaminhoImagem);
   end;
 end;
 
@@ -287,9 +285,6 @@ begin
   begin
     lCaminhoImagem := abrirImagem.FileName;
     imagemB.Picture.LoadFromFile(lCaminhoImagem);
-
-    /// IMAGEM B
-    FImagemB.LoadFromFile(lCaminhoImagem);
   end;
 end;
 
@@ -486,75 +481,42 @@ end;
 procedure TfrmPrincipal.btnNOTClick(Sender: TObject);
 var
   lLargura, lAltura: Integer;
-  lAuxImagemA, lAuxImagemB: TImage;
+  lAuxImagemA: TImage;
 
   lX, lY: Integer;
-  lCorPixelA, lCorPixelB: TColor;
-  lRedA, lGreenA, lBlueA, lRedB, lGreenB, lBlueB: UInt8;
+  lCorPixelA: TColor;
+  lRedA, lGreenA, lBlueA: UInt8;
 begin
   lLargura := 335;
   lAltura :=  281;
   try
     lAuxImagemA := TImage.Create(nil);
-    lAuxImagemB := TImage.Create(nil);
 
     lAuxImagemA.Width := lLargura;
     lAuxImagemA.Height := lAltura;
-    lAuxImagemB.Width := lLargura;
-    lAuxImagemB.Height := lAltura;
 
     // Ajusta o tamanho das imagens
     lAuxImagemA.Canvas.StretchDraw(lAuxImagemA.Canvas.ClipRect, imagemA.Picture.Graphic);
-    lAuxImagemB.Canvas.StretchDraw(lAuxImagemB.Canvas.ClipRect, imagemB.Picture.Graphic);
 
     for lY := 0 to lAuxImagemA.Height - 1 do
     begin
       for lX := 0 to lAuxImagemA.Width - 1 do
       begin
         lCorPixelA := lAuxImagemA.Canvas.Pixels[lX, lY];
-        lCorPixelB := lAuxImagemB.Canvas.Pixels[lX, lY];
 
         lRedA := GetRValue(lCorPixelA);
         lGreenA := GetGValue(lCorPixelA);
         lBlueA := GetBValue(lCorPixelA);
 
-        lRedB := GetRValue(lCorPixelB);
-        lGreenB := GetGValue(lCorPixelB);
-        lBlueB := GetBValue(lCorPixelB);
-
-        if ((lRedA > 0) and (lRedB > 0)) then
-        begin
-          lRedA := 255;
-        end
-        else
-        begin
-          lRedA := 0;
-        end;
-
-        if ((lGreenA > 0) and (lGreenB > 0)) then
-        begin
-          lGreenA := 255;
-        end
-        else
-        begin
-          lGreenA := 0;
-        end;
-
-        if ((lBlueA > 0) and (lBlueB > 0)) then
-        begin
-          lBlueA := 255;
-        end
-        else
-        begin
-          lBlueA := 0;
-        end;
+        lRedA := Trunc(Max(255 - lRedA, 0));
+        lGreenA := Trunc(Max(255 - lGreenA, 0));
+        lBlueA := Trunc(Max(255 - lBlueA, 0));
 
         imagemResultante.Canvas.Pixels[lX, lY] := RGB(lRedA, lGreenA, lBlueA);
       end;
     end;
   finally
     FreeAndNil(lAuxImagemA);
-    FreeAndNil(lAuxImagemB);
   end;
 end;
 
@@ -581,6 +543,9 @@ begin
     // Ajusta o tamanho das imagens
     lAuxImagemA.Canvas.StretchDraw(lAuxImagemA.Canvas.ClipRect, imagemA.Picture.Graphic);
     lAuxImagemB.Canvas.StretchDraw(lAuxImagemB.Canvas.ClipRect, imagemB.Picture.Graphic);
+
+    converterParaBinario(lAuxImagemA);
+    converterParaBinario(lAuxImagemB);
 
     for lY := 0 to lAuxImagemA.Height - 1 do
     begin
@@ -692,6 +657,20 @@ begin
   end;
 end;
 
+procedure TfrmPrincipal.btnTrocaImagemClick(Sender: TObject);
+var
+  lAuxImagem: TImage;
+begin
+  lAuxImagem := TImage.Create(nil);
+  try
+    lAuxImagem.Picture := imagemA.Picture;
+    imagemA.Picture := imagemB.Picture;
+    imagemB.Picture := lAuxImagem.Picture;
+  finally
+    FreeAndNil(lAuxImagem);
+  end;
+end;
+
 procedure TfrmPrincipal.btnXORClick(Sender: TObject);
 var
   lLargura, lAltura: Integer;
@@ -716,6 +695,9 @@ begin
     lAuxImagemA.Canvas.StretchDraw(lAuxImagemA.Canvas.ClipRect, imagemA.Picture.Graphic);
     lAuxImagemB.Canvas.StretchDraw(lAuxImagemB.Canvas.ClipRect, imagemB.Picture.Graphic);
 
+    converterParaBinario(lAuxImagemA);
+    converterParaBinario(lAuxImagemB);
+
     for lY := 0 to lAuxImagemA.Height - 1 do
     begin
       for lX := 0 to lAuxImagemA.Width - 1 do
@@ -731,7 +713,7 @@ begin
         lGreenB := GetGValue(lCorPixelB);
         lBlueB := GetBValue(lCorPixelB);
 
-        if ((lRedA > 0) or (lRedB > 0)) then
+        if ((lRedA > 0) xor (lRedB > 0)) then
         begin
           lRedA := 255;
         end
@@ -740,7 +722,7 @@ begin
           lRedA := 0;
         end;
 
-        if ((lGreenA > 0) or (lGreenB > 0)) then
+        if ((lGreenA > 0) xor (lGreenB > 0)) then
         begin
           lGreenA := 255;
         end
@@ -749,7 +731,7 @@ begin
           lGreenA := 0;
         end;
 
-        if ((lBlueA > 0) or (lBlueB > 0)) then
+        if ((lBlueA > 0) xor (lBlueB > 0)) then
         begin
           lBlueA := 255;
         end
@@ -767,10 +749,38 @@ begin
   end;
 end;
 
-procedure TfrmPrincipal.FormCreate(Sender: TObject);
+procedure TfrmPrincipal.converterParaBinario(pImagem: TImage);
+var
+  lX, lY: Integer;
+  lCorPixel: TColor;
+  lRed, lGreen, lBlue: UInt8;
 begin
-  FImagemA := TWICImage.Create;
-  FImagemB := TWICImage.Create;
+  for lY := 0 to pImagem.Height - 1 do
+  begin
+    for lX := 0 to pImagem.Width - 1 do
+    begin
+      lCorPixel := pImagem.Canvas.Pixels[lX, lY];
+
+      lRed := GetRValue(lCorPixel);
+      lGreen := GetGValue(lCorPixel);
+      lBlue := GetBValue(lCorPixel);
+
+      if ((lRed >= 128) and (lGreen >= 128) and (lBlue >= 128)) then
+      begin
+        lRed := 255;
+        lGreen := 255;
+        lBlue := 255;
+      end
+      else
+      begin
+        lRed := 0;
+        lGreen := 0;
+        lBlue := 0;
+      end;
+
+      pImagem.Canvas.Pixels[lX, lY] := RGB(lRed, lGreen, lBlue);
+    end;
+  end;
 end;
 
 end.
