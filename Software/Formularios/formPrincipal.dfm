@@ -4,7 +4,7 @@ object frmPrincipal: TfrmPrincipal
   BorderIcons = [biSystemMenu, biMinimize]
   Caption = 'Opera'#231#245'es Aritm'#233'ticas e L'#243'gicas em Imagens'
   ClientHeight = 672
-  ClientWidth = 1327
+  ClientWidth = 1328
   Color = clBtnFace
   DragMode = dmAutomatic
   Font.Charset = DEFAULT_CHARSET
@@ -8858,33 +8858,38 @@ object frmPrincipal: TfrmPrincipal
     Top = 357
     Width = 139
     Height = 33
-    Caption = 'Filtragem por valor Minimo'
+    Caption = 'Filtragem por valor M'#237'nimo'
     TabOrder = 10
     OnClick = btnFiltragemPorMinimoClick
   end
-  object Chart1: TChart
-    Left = 16
-    Top = 396
-    Width = 769
-    Height = 221
-    Foot.Frame.Visible = False
-    Legend.Visible = False
-    Title.Frame.Visible = False
-    Title.Text.Strings = (
-      'TChart')
-    Chart3DPercent = 35
-    View3D = False
+  object lMatrizAux: TStringGrid
+    Left = 1375
+    Top = 23
+    Width = 122
+    Height = 81
+    ColCount = 500
+    DefaultColWidth = 3
+    DefaultRowHeight = 3
+    RowCount = 500
     TabOrder = 11
-    DefaultCanvas = 'TGDIPlusCanvas'
-    ColorPaletteIndex = 13
-    object Series1: TBarSeries
-      Marks.Visible = False
-      Marks.Style = smsValue
-      XValues.Name = 'X'
-      XValues.Order = loAscending
-      YValues.Name = 'Bar'
-      YValues.Order = loNone
-    end
+  end
+  object btnFiltragemPorMaximo: TButton
+    Left = 1160
+    Top = 435
+    Width = 139
+    Height = 33
+    Caption = 'Filtragem por valor M'#225'ximo'
+    TabOrder = 12
+    OnClick = btnFiltragemPorMaximoClick
+  end
+  object btnSuavizacao: TButton
+    Left = 1160
+    Top = 474
+    Width = 139
+    Height = 33
+    Caption = 'Suaviza'#231#227'o'
+    TabOrder = 13
+    OnClick = btnSuavizacaoClick
   end
   object abrirImagem: TOpenPictureDialog
     Left = 369
