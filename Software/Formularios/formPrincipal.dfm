@@ -8891,6 +8891,59 @@ object frmPrincipal: TfrmPrincipal
     TabOrder = 13
     OnClick = btnSuavizacaoClick
   end
+  object btnFiltragemOrdem: TButton
+    Left = 984
+    Top = 318
+    Width = 129
+    Height = 33
+    Caption = 'Filtragem por Ordem'
+    TabOrder = 14
+    OnClick = btnFiltragemOrdemClick
+  end
+  object edtOrdem: TEdit
+    Left = 1014
+    Top = 357
+    Width = 69
+    Height = 21
+    Hint = 
+      'Valores inv'#225'lidos s'#227'o convertidos para 1.'#13#10'Valores permitidos en' +
+      'tre 0,0 e 1,0'
+    HelpType = htKeyword
+    TabOrder = 15
+  end
+  object Chart1: TChart
+    Left = 144
+    Top = 384
+    Width = 400
+    Height = 250
+    Foot.Frame.Visible = False
+    Legend.Visible = False
+    Title.Frame.Visible = False
+    Title.Text.Strings = (
+      'TChart')
+    Chart3DPercent = 35
+    View3D = False
+    TabOrder = 16
+    DefaultCanvas = 'TGDIPlusCanvas'
+    ColorPaletteIndex = 13
+    object Series1: TBarSeries
+      Marks.Visible = False
+      Marks.Style = smsValue
+      XValues.Name = 'X'
+      XValues.Order = loAscending
+      YValues.Name = 'Bar'
+      YValues.Order = loNone
+    end
+  end
+  object btnHistograma: TButton
+    Left = 984
+    Top = 400
+    Width = 129
+    Height = 25
+    Caption = 'Histograma'
+    TabOrder = 17
+    OnClick = btnHistogramaClick
+  end
   object abrirImagem: TOpenPictureDialog
     Left = 369
     Top = 48

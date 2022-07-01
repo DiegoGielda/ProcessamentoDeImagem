@@ -44,6 +44,11 @@ type
     lMatrizAux: TStringGrid;
     btnFiltragemPorMaximo: TButton;
     btnSuavizacao: TButton;
+    btnFiltragemOrdem: TButton;
+    edtOrdem: TEdit;
+    Chart1: TChart;
+    Series1: TBarSeries;
+    btnHistograma: TButton;
     procedure btnCarregarImagemAClick(Sender: TObject);
     procedure btnCarregarImagemBClick(Sender: TObject);
     procedure btnCinzaClick(Sender: TObject);
@@ -64,6 +69,8 @@ type
     procedure FormCreate(Sender: TObject);
     procedure btnFiltragemPorMaximoClick(Sender: TObject);
     procedure btnSuavizacaoClick(Sender: TObject);
+    procedure btnFiltragemOrdemClick(Sender: TObject);
+    procedure btnHistogramaClick(Sender: TObject);
   private
     { Private declarations }
 
@@ -82,9 +89,11 @@ type
     procedure maximoMatriz(pMatrizCor: TStringGrid);
     procedure medianaMatriz(pMatrizCor: TStringGrid);
     procedure SuavizacaoMatriz(pMatrizCor: TStringGrid);
+    procedure OrdemMatriz(pMatrizCor: TStringGrid);
 
 
-    procedure ordenarValores(var pArray: array of Integer);
+    procedure ordenarValores(var pArray: array of Integer) overload;
+    procedure ordenarValores(var pArray: array of Cardinal) overload;
 
   public
     { Public declarations }
@@ -406,6 +415,159 @@ begin
     finally
       FreeAndNil(lAuxImagemA);
     end;
+  end;
+end;
+
+procedure TfrmPrincipal.btnHistogramaClick(Sender: TObject);
+var
+  lLargura, lAltura: Integer;
+  lX, lY: Integer;
+  lAuxImagemA, lAuxImagemBCinza: TImage;
+  lCorPixel: TColor;
+  lRed, lGreen, lBlue: UInt8;
+  lNivelCinza: UInt8;
+
+  lHistogramaArray: array[0..256] of Cardinal;
+
+  histCountR: array[0..256] of Cardinal;
+  histCountG: array[0..256] of Cardinal;
+  histCountB: array[0..256] of Cardinal;
+
+  cfdR: array[0..256] of Cardinal;
+  cfdG: array[0..256] of Cardinal;
+  cfdB: array[0..256] of Cardinal;
+
+  minCfdR, minCfdG, minCfdB: Integer;
+
+  imageArea: Currency;
+
+  hR: array[0..256] of Cardinal;
+  hG: array[0..256] of Cardinal;
+  hB: array[0..256] of Cardinal;
+
+  R, G, B: Integer;
+
+begin
+  lLargura := 335;
+  lAltura :=  281;
+  try
+    lAuxImagemA := TImage.Create(nil);
+    lAuxImagemBCinza := TImage.Create(nil);
+
+    lAuxImagemA.Width := lLargura;
+    lAuxImagemA.Height := lAltura;
+    lAuxImagemBCinza.Width := lLargura;
+    lAuxImagemBCinza.Height := lAltura;
+
+    // Ajusta o tamanho das imagens
+    lAuxImagemA.Canvas.StretchDraw(lAuxImagemA.Canvas.ClipRect, imagemA.Picture.Graphic);
+
+    /////////////// ATRIBUI A PRIMEIRA IMAGEM //////////////////
+
+    for lY := 0 to lAuxImagemA.Height - 1 do
+    begin
+      for lX := 0 to lAuxImagemA.Width - 1 do
+      begin
+        lCorPixel := lAuxImagemA.Canvas.Pixels[lX, lY];
+
+        lRed := GetRValue(lCorPixel);
+        lGreen := GetGValue(lCorPixel);
+        lBlue := GetBValue(lCorPixel);
+
+        lNivelCinza := Trunc(Min((lRed * 0.3) + (lGreen * 0.59) + (lBlue * 0.11), 255));
+
+        lAuxImagemBCinza.Canvas.Pixels[lX, lY] := RGB(lNivelCinza, lNivelCinza, lNivelCinza);
+
+        // Atribui no Array
+        lHistogramaArray[lNivelCinza] := lHistogramaArray[lNivelCinza] + 1;
+
+      end;
+    end;
+
+    //// Atribui no Char
+    //chart1.Series[1].Clear;
+    for lY := 1 to 255 do
+    begin
+     // chart1.Series[lY].AddXY(lY, lHistogramaArray[lY]);
+      //chart1.Series[lY].XValues[lY] := 8
+    end;
+
+   //////////////////////////// CALCULAR A MUDANÇA DA IMAGEM ////////////////
+
+    // LIMPA A IMAGEM
+    lAuxImagemA.Canvas.StretchDraw(lAuxImagemA.Canvas.ClipRect, imagemA.Picture.Graphic);
+
+    // calcular o histograma 1
+
+    for lX := 0 to lAuxImagemA.Width - 1 do
+    begin
+      for lY := 0 to lAuxImagemA.Height - 1 do
+      begin
+        lCorPixel := lAuxImagemA.Canvas.Pixels[lX, lY];
+
+        lRed := GetRValue(lCorPixel);
+        lGreen := GetGValue(lCorPixel);
+        lBlue := GetBValue(lCorPixel);
+
+        histCountR[lRed] := histCountR[lRed] + 1;
+        histCountG[lGreen] := histCountG[lGreen] + 1;
+        histCountB[lBlue] := histCountB[lBlue] + 1;
+
+      end;
+    end;
+
+    // Calcular o histograma 2 - CFD
+
+    cfdR[0] := histCountR[0];
+    cfdG[0] := histCountG[0];
+    cfdB[0] := histCountB[0];
+
+    for lY := 1 to 255 do
+    begin
+      cfdR[lY] := histCountR[lY] + cfdR[lY - 1];
+      cfdG[lY] := histCountG[lY] + cfdG[lY - 1];
+      cfdB[lY] := histCountB[lY] + cfdB[lY - 1];
+    end;
+
+    ordenarValores(cfdR);
+    ordenarValores(cfdG);
+    ordenarValores(cfdB);
+
+    minCfdR := cfdR[0];
+    minCfdG := cfdG[0];
+    minCfdB := cfdB[0];
+
+    imageArea := lAuxImagemA.Width * lAuxImagemA.Height;
+
+    //Parte 3 - Calculate nova Color
+
+    for lX := 0 to lAuxImagemA.Width - 1 do
+    begin
+      for lY := 0 to lAuxImagemA.Height - 1 do
+      begin
+        lCorPixel := lAuxImagemA.Canvas.Pixels[lX, lY];
+
+        lRed := GetRValue(lCorPixel);
+        lGreen := GetGValue(lCorPixel);
+        lBlue := GetBValue(lCorPixel);
+
+        R := Round(((cfdR[lRed] - minCfdR) / (imageArea - minCfdR)) * 254);
+        G := Round(((cfdG[lGreen] - minCfdG) / (imageArea - minCfdG)) * 254);
+        B := Round(((cfdB[lBlue] - minCfdB) / (imageArea - minCfdB)) * 254);
+
+
+        imagemResultante.Canvas.Pixels[lX, lY] := RGB(R, G, B);
+
+      end;
+    end;
+
+  //////////////////////////// Atribuir segunda imagem ////////////////
+
+
+
+  finally
+    FreeAndNil(lAuxImagemA);
+    FreeAndNil(lAuxImagemBCinza);
   end;
 end;
 
@@ -900,9 +1062,9 @@ begin
       end;
     end;
 
-    minimoMatriz(lMatrizRed);
-    minimoMatriz(lMatrizGreen);
-    minimoMatriz(lMatrizBlue);
+    SuavizacaoMatriz(lMatrizRed);
+    SuavizacaoMatriz(lMatrizGreen);
+    SuavizacaoMatriz(lMatrizBlue);
 
     for lY := 0 to lAuxImagemA.Height - 1 do
     begin
@@ -1070,6 +1232,67 @@ begin
   finally
     FreeAndNil(lAuxImagemA);
     FreeAndNil(lAuxImagemB);
+  end;
+end;
+
+procedure TfrmPrincipal.btnFiltragemOrdemClick(Sender: TObject);
+var
+  //IMatrizRed : array[0..500, 0..500] of Integer;
+  //IMatrizGreen: array[0..500, 0..500] of Integer;
+  //IMatrizBlue: array[0..500, 0..500] of Integer;
+
+  lLargura, lAltura: Integer;
+  lX, lY: Integer;
+  lAuxImagemA: TImage;
+  lCorPixel: TColor;
+  lRed, lGreen, lBlue: UInt8;
+
+begin
+  if Trim(edtOrdem.Text) <> '' then
+  begin
+    lLargura := 335;
+    lAltura :=  281;
+    try
+      lAuxImagemA := TImage.Create(nil);
+
+      lAuxImagemA.Width := lLargura;
+      lAuxImagemA.Height := lAltura;
+
+      // Ajusta o tamanho das imagens
+      lAuxImagemA.Canvas.StretchDraw(lAuxImagemA.Canvas.ClipRect, imagemA.Picture.Graphic);
+
+      for lY := 0 to lAuxImagemA.Height - 1 do
+      begin
+        for lX := 0 to lAuxImagemA.Width - 1 do
+        begin
+          lCorPixel := lAuxImagemA.Canvas.Pixels[lX, lY];
+
+          lMatrizRed.Cells[lY, lX] := GetColorRed(lCorPixel);
+          lMatrizGreen.Cells[lY, lX] := GetColorGreen(lCorPixel);
+          lMatrizBlue.Cells[lY, lX] := GetColorBlue(lCorPixel);
+        end;
+      end;
+
+      OrdemMatriz(lMatrizRed);
+      OrdemMatriz(lMatrizGreen);
+      OrdemMatriz(lMatrizBlue);
+
+      for lY := 0 to lAuxImagemA.Height - 1 do
+      begin
+        for lX := 0 to lAuxImagemA.Width - 1 do
+        begin
+
+          lRed := GetCor(lMatrizRed.Cells[lY, lX]);
+          lGreen := GetCor(lMatrizGreen.Cells[lY, lX]);
+          lBlue := GetCor(lMatrizBlue.Cells[lY, lX]);
+
+          imagemResultante.Canvas.Pixels[lX, lY] := RGB(lRed, lGreen, lBlue);
+        end;
+      end;
+
+    finally
+      FreeAndNil(lAuxImagemA);
+    end;
   end;
 end;
 
@@ -1324,6 +1547,128 @@ begin
     begin
       pMatrizCor.Cells[lX, lY] := lMatrizAux.Cells[lX, lY];
     end;
+  end;
+end;
+
+procedure TfrmPrincipal.OrdemMatriz(pMatrizCor: TStringGrid);
+var
+  lContador: Integer;
+  lX, lY: Integer;
+  lMediaPixel, lOrdem: Integer;
+  lXFora, lYFora: Boolean;
+  lArrayMinimo: Array [0..8] of Integer;
+begin
+  lOrdem :=  StrToIntDef(edtOrdem.Text, 0);
+  if lOrdem > 8 then
+    lOrdem := 8
+  else if lOrdem < 0 then
+    lOrdem := 8;
+
+  //// pegando a media
+  /// TROCADO OS VALORES DE LX E LY NO FOR
+  for lX := 0 to 281 do
+  begin
+    for lY := 0 to 335 do
+    begin
+      /// Zerando Array
+      for lContador := 0 to 8 Do
+        lArrayMinimo[lContador] := 0;
+
+      lXFora := ((lX - 1) < 0);
+      lYFora := ((lY - 1) < 0);
+
+      // centro
+      lArrayMinimo[0] := ValorCor(pMatrizCor.Cells[lX, lY]);
+
+      // acima
+      if lYFora then
+        lArrayMinimo[1] := ValorCor(pMatrizCor.Cells[lX, lY])
+      else
+        lArrayMinimo[1] := ValorCor(pMatrizCor.Cells[lX, lY - 1]);
+
+      // acima-esquerda
+      if (lYFora or  lXFora)then
+        lArrayMinimo[2] := ValorCor(pMatrizCor.Cells[lX, lY])
+      else
+        lArrayMinimo[2] := ValorCor(pMatrizCor.Cells[lX - 1, lY - 1]);
+
+      // esquerda
+      if lXFora then
+        lArrayMinimo[3] := ValorCor(pMatrizCor.Cells[lX, lY])
+      else
+        lArrayMinimo[3] := ValorCor(pMatrizCor.Cells[lX - 1, lY]);
+
+      lYFora := ((lY + 1) > 281);
+
+      // esquerda-abaixo
+      if (lXFora or  lYFora)then
+        lArrayMinimo[4] := ValorCor(pMatrizCor.Cells[lX, lY])
+      else
+        lArrayMinimo[4] := ValorCor(pMatrizCor.Cells[lX - 1, lY + 1]);
+
+      // abaixo
+      if lYFora then
+        lArrayMinimo[5] := ValorCor(pMatrizCor.Cells[lX, lY])
+      else
+        lArrayMinimo[5] := ValorCor(pMatrizCor.Cells[lX, lY + 1]);
+
+      lXFora := ((lY + 1) > 281);
+
+      // abaixo-direita
+      if (lXFora or  lYFora)then
+        lArrayMinimo[6] := ValorCor(pMatrizCor.Cells[lX, lY])
+      else
+        lArrayMinimo[6] := ValorCor(pMatrizCor.Cells[lX + 1, lY + 1]);
+
+      // direita
+      if (lXFora)then
+        lArrayMinimo[7] := ValorCor(pMatrizCor.Cells[lX, lY])
+      else
+        lArrayMinimo[7] := ValorCor(pMatrizCor.Cells[lX + 1, lY]);
+
+      lYFora := ((lY - 1) < 0);
+
+      // direita-acima
+      if (lYFora or  lXFora) then
+        lArrayMinimo[8] := ValorCor(pMatrizCor.Cells[lX, lY])
+      else
+        lArrayMinimo[8] := ValorCor(pMatrizCor.Cells[lX + 1, lY - 1]);
+
+
+      // Ordenar valores no Array
+      ordenarValores(lArrayMinimo);
+
+      // Pega o pixel indicado
+      lMatrizAux.Cells[lX, lY] :=  GetCor(lArrayMinimo[lOrdem]);
+    end;
+  end;
+
+  /// Retornar mudança
+  for lX := 0 to 281 do
+  begin
+    for lY := 0 to 335 do
+    begin
+      pMatrizCor.Cells[lX, lY] := lMatrizAux.Cells[lX, lY];
+    end;
+  end;
+end;
+
+procedure TfrmPrincipal.ordenarValores(var pArray: array of Cardinal);
+var
+  auxiliar, externo, interno: Cardinal;
+begin
+  for externo := 0 to 7 do
+  begin
+    for interno := externo + 1 to 8 do
+	begin
+	  if pArray[externo] > pArray[interno] then
+	  begin
+	    auxiliar := pArray[externo];
+
+		  pArray[externo] := pArray[interno];
+		  pArray[interno] := auxiliar;
+	  end;
+	end;
   end;
 end;
 
