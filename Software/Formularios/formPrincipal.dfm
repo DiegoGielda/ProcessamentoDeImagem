@@ -3,7 +3,7 @@ object frmPrincipal: TfrmPrincipal
   Top = 0
   BorderIcons = [biSystemMenu, biMinimize]
   Caption = 'Opera'#231#245'es Aritm'#233'ticas e L'#243'gicas em Imagens'
-  ClientHeight = 808
+  ClientHeight = 672
   ClientWidth = 1327
   Color = clBtnFace
   DragMode = dmAutomatic
@@ -8866,7 +8866,7 @@ object frmPrincipal: TfrmPrincipal
     Left = 16
     Top = 396
     Width = 769
-    Height = 373
+    Height = 221
     Foot.Frame.Visible = False
     Legend.Visible = False
     Title.Frame.Visible = False
