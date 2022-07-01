@@ -3,8 +3,8 @@ object frmPrincipal: TfrmPrincipal
   Top = 0
   BorderIcons = [biSystemMenu, biMinimize]
   Caption = 'Opera'#231#245'es Aritm'#233'ticas e L'#243'gicas em Imagens'
-  ClientHeight = 378
-  ClientWidth = 1344
+  ClientHeight = 808
+  ClientWidth = 1327
   Color = clBtnFace
   DragMode = dmAutomatic
   Font.Charset = DEFAULT_CHARSET
@@ -151,6 +151,7 @@ object frmPrincipal: TfrmPrincipal
   Position = poDesktopCenter
   PrintScale = poNone
   ShowHint = True
+  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
   object btnTrocaImagem: TSpeedButton
@@ -8725,7 +8726,7 @@ object frmPrincipal: TfrmPrincipal
       Left = 116
       Top = 109
       Width = 69
-      Height = 25
+      Height = 21
       Hint = 
         'Valores inv'#225'lidos s'#227'o convertidos para 1.'#13#10'Valores permitido mai' +
         'or que 0.'
@@ -8736,7 +8737,7 @@ object frmPrincipal: TfrmPrincipal
       Left = 116
       Top = 171
       Width = 69
-      Height = 25
+      Height = 21
       Hint = 
         'Valores inv'#225'lidos s'#227'o convertidos para 1.'#13#10'Valores permitidos en' +
         'tre 0,0 e 1,0'
@@ -8799,6 +8800,90 @@ object frmPrincipal: TfrmPrincipal
       Center = True
       IncrementalDisplay = True
       Stretch = True
+    end
+  end
+  object btnFiltragemPorMedia: TButton
+    Left = 1160
+    Top = 318
+    Width = 139
+    Height = 33
+    Caption = 'Filtragem por media'
+    TabOrder = 5
+    OnClick = btnFiltragemPorMediaClick
+  end
+  object lMatrizRed: TStringGrid
+    Left = 1375
+    Top = 23
+    Width = 122
+    Height = 81
+    ColCount = 500
+    DefaultColWidth = 3
+    DefaultRowHeight = 3
+    RowCount = 500
+    TabOrder = 6
+  end
+  object lMatrizGreen: TStringGrid
+    Left = 1375
+    Top = 23
+    Width = 122
+    Height = 81
+    ColCount = 500
+    DefaultColWidth = 3
+    DefaultRowHeight = 3
+    RowCount = 500
+    TabOrder = 7
+  end
+  object lMatrizBlue: TStringGrid
+    Left = 1375
+    Top = 23
+    Width = 122
+    Height = 81
+    ColCount = 500
+    DefaultColWidth = 3
+    DefaultRowHeight = 3
+    RowCount = 500
+    TabOrder = 8
+  end
+  object btnFiltragemPorMediana: TButton
+    Left = 1160
+    Top = 396
+    Width = 139
+    Height = 33
+    Caption = 'Filtragem por Mediana'
+    TabOrder = 9
+    OnClick = btnFiltragemPorMedianaClick
+  end
+  object btnFiltragemPorMinimo: TButton
+    Left = 1160
+    Top = 357
+    Width = 139
+    Height = 33
+    Caption = 'Filtragem por valor Minimo'
+    TabOrder = 10
+    OnClick = btnFiltragemPorMinimoClick
+  end
+  object Chart1: TChart
+    Left = 16
+    Top = 396
+    Width = 769
+    Height = 373
+    Foot.Frame.Visible = False
+    Legend.Visible = False
+    Title.Frame.Visible = False
+    Title.Text.Strings = (
+      'TChart')
+    Chart3DPercent = 35
+    View3D = False
+    TabOrder = 11
+    DefaultCanvas = 'TGDIPlusCanvas'
+    ColorPaletteIndex = 13
+    object Series1: TBarSeries
+      Marks.Visible = False
+      Marks.Style = smsValue
+      XValues.Name = 'X'
+      XValues.Order = loAscending
+      YValues.Name = 'Bar'
+      YValues.Order = loNone
     end
   end
   object abrirImagem: TOpenPictureDialog
